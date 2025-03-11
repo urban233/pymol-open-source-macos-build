@@ -93,10 +93,8 @@ Feel free to contribute or test the files as needed.
 #### Prerequisites:
 - CMake
     - **Be aware**: Add the cmake to your PATH variable. Check by running `cmake --version`
-- Ubuntu:
-    ```shell
-    sudo apt update -y && sudo apt-get install git build-essential python3.11-dev libglew-dev libpng-dev libfreetype6-dev libxml2-dev libmsgpack-dev python3-pyqt5.qtopengl libglm-dev libnetcdf-dev autoconf
-    ```
+- Clang & Clang++:
+    - Xcode developer tools
 
 #### Step-by-step guide
 1. Load the CMake project (e.g. in PyCharm right-click on the CMakeLists.txt file 
