@@ -3,9 +3,6 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# C extensions
-*.so
-
 # Distribution / packaging
 .Python
 build/
@@ -165,10 +162,26 @@ cython_debug/
 #  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
 #  and can be added to the global gitignore or merged into this file.  For a more nuclear
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
-#.idea/
-
-# Ruff stuff:
-.ruff_cache/
+.idea/
 
 # PyPI configuration file
 .pypirc
+
+# Custom excludes
+/alternative_design/convert_to_ico/logo-16.png
+/alternative_design/convert_to_ico/logo-32.png
+/alternative_design/convert_to_ico/logo-48.png
+/alternative_design/convert_to_ico/logo-64.png
+/alternative_design/convert_to_ico/logo-128.png
+/alternative_design/convert_to_ico/logo-256.png
+/alternative_design/convert_to_ico/logo.ico
+/cmake-build-debug/
+/cmake-build-release/
+/cmake-build-setup_py/
+/vendor/vcpkg/
+/vendor/pymol-open-source/
+/vcpkg_installed/
+/src/
+/pymol/
+/pre-built/macos/lib_64/
+/pre-built/linux/lib_64/
