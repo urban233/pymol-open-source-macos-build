@@ -7,7 +7,7 @@ _FILEPATH = pathlib.Path(__file__).parent
 
 if __name__ == '__main__':
     cmd.fetch("3bmp")
-    if pathlib.Path(_FILEPATH / "3bmp.cif").exists():
+    if not pathlib.Path(_FILEPATH / "3bmp.cif").exists():
         print("Test failed!")
         print("The fetched protein could NOT be found!")
         exit(1)

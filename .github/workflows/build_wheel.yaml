@@ -1,0 +1,38 @@
+name: Build Wheel
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      # You can test your matrix by printing the current Python version
+      - name: Display Python version
+        run: python -c "import sys; print(sys.version)"
+
+      - name: Install dependencies
+        run: |
+          python -m venv .venv
+          ./.venv/bin/pip install wheel setuptools
+          ./.venv/bin/pip install -r requirements.txt
+          ./run_automation.sh setup-dev-env
+
+      - name: Build wheel
+        run: |
+          ./run_automation.sh build-wheel
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheel-${{ matrix.python-version }}
+          path: dist/*.whl
