@@ -106,6 +106,7 @@ icon in the bottom left panel and click on the `Gear icon > CMake Settings`)
     -DCMAKE_TOOLCHAIN_FILE=$CMakeProjectDir$/vendor/vcpkg/scripts/buildsystems/vcpkg.cmake
     -DPYTHON_VER=3.11
     -DSHARED_SUFFIX=.cpython-311-darwin.so
+    -DCMAKE_OSX_ARCHITECTURES=x86_64
     ```
 4. Build the project.
 5. **Optional**: If you now run `./run_automation.sh build-wheel` the new 
