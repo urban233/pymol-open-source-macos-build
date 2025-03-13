@@ -101,9 +101,11 @@ Feel free to contribute or test the files as needed.
 and select `Load CMake Project`)
 2. Create a `Release` CMake build profile (e.g. in PyCharm click on the CMake 
 icon in the bottom left panel and click on the `Gear icon > CMake Settings`)
-3. Add the following line to your CMake build profile:
+3. Add the following lines (example Python 3.11) to your CMake build profile:
     ```shell
     -DCMAKE_TOOLCHAIN_FILE=$CMakeProjectDir$/vendor/vcpkg/scripts/buildsystems/vcpkg.cmake
+    -DPYTHON_VER=3.11
+    -DSHARED_SUFFIX=.cpython-311-darwin.so
     ```
 4. Build the project.
 5. **Optional**: If you now run `./run_automation.sh build-wheel` the new 

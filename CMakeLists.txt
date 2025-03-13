@@ -254,9 +254,9 @@ set(ALL_COMP_ARGS
 target_compile_options(_cmd PRIVATE ${ALL_COMP_ARGS})
 
 # Set Python paths manually
-find_package(Python3 3.11 EXACT COMPONENTS Development REQUIRED)
+find_package(Python3 ${PYTHON_VER} EXACT COMPONENTS Development REQUIRED)
 
-set(SHARED_SUFFIX .cpython-311-darwin.so)
+#set(SHARED_SUFFIX .cpython-311-darwin.so)
 set_target_properties(_cmd PROPERTIES SUFFIX ${SHARED_SUFFIX})
 
 target_compile_features(_cmd PRIVATE cxx_std_17)
@@ -289,7 +289,7 @@ set (ALL_INC_DIR
         vendor/pymol-open-source/layer5
         vendor/pymol-open-source/build/generated
         vendor/pymol-open-source/contrib/uiuc/plugins/molfile_plugin/src
-        .venv/lib/python3.11/site-packages/numpy/core/include
+        .venv/lib/python${PYTHON_VER}/site-packages/numpy/core/include
         vcpkg_installed/x64-osx/include
         ${Python3_INCLUDE_DIRS}
         ${NUMPY_INCLUDE_DIR}
@@ -297,9 +297,6 @@ set (ALL_INC_DIR
 )
 
 target_include_directories(_cmd PUBLIC ${ALL_INC_DIR})
-
-add_library(omp STATIC IMPORTED)
-set_target_properties(omp PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/pre-built/libx64/libomp.a)
 
 target_link_directories(_cmd PRIVATE ${CMAKE_SOURCE_DIR}/vcpkg_installed/x64-osx/lib)
 target_link_options(_cmd PRIVATE

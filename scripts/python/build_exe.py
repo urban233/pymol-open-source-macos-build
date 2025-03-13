@@ -1,3 +1,19 @@
+"""
+#A* -------------------------------------------------------------------
+#B* This file contains source code for running automation tasks related
+#-* to the build process of the PyMOL computer program
+#C* Copyright 2025 by Martin Urban.
+#D* -------------------------------------------------------------------
+#E* It is unlawful to modify or remove this copyright notice.
+#F* -------------------------------------------------------------------
+#G* Please see the accompanying LICENSE file for further information.
+#H* -------------------------------------------------------------------
+#I* Additional authors of this source file include:
+#-*
+#-*
+#-*
+#Z* -------------------------------------------------------------------
+"""
 import os
 import pathlib
 import shutil
@@ -6,6 +22,7 @@ import zipfile
 from cx_Freeze import Freezer, Executable
 
 FILE_ROOT_PATH = pathlib.Path(__file__).parent
+
 
 # Define the entry point of your application
 executable = Executable(

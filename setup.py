@@ -18,6 +18,7 @@ import os
 import pathlib
 import shutil
 import subprocess
+import sys
 
 from setuptools import find_packages
 from setuptools import setup
@@ -44,21 +45,31 @@ class CMakeBuildExt(build_ext):
     self.build_cmake_extension()
 
   def build_cmake_extension(self):
-    """Run CMake to build the C++ extension."""
+    """Run CMake to build the C/C++ extension."""
+    tmp_python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
     build_dir = os.path.join(".", "cmake-build-setup_py")
     os.makedirs(build_dir, exist_ok=True)
+
+    tmp_cmd_suffix = f".cpython-{tmp_python_version.replace('.', '')}-darwin.so"
 
     # CMake arguments
     cmake_args = [
       "-DCMAKE_TOOLCHAIN_FILE=./vendor/vcpkg/scripts/buildsystems/vcpkg.cmake",
+      f"-DPYTHON_VER={tmp_python_version}",
+      f"-DSHARED_SUFFIX={tmp_cmd_suffix}",
     ]
 
     # Run CMake to configure and build the extension
     subprocess.check_call(["cmake", PROJECT_ROOT_DIR] + cmake_args, cwd=build_dir)
     subprocess.check_call(["cmake", "--build", build_dir, "--config", "Release"])
+
     shutil.copyfile(
-      pathlib.Path(PROJECT_ROOT_DIR / "cmake-build-setup_py/_cmd.cpython-311-x86_64-linux-gnu.so"),
-      pathlib.Path(PROJECT_ROOT_DIR / 'src/python/pymol/_cmd.cpython-311-x86_64-linux-gnu.so'),
+      pathlib.Path(
+        PROJECT_ROOT_DIR / "cmake-build-setup_py" / f"_cmd{tmp_cmd_suffix}"
+      ),
+      pathlib.Path(
+        PROJECT_ROOT_DIR / "src/python/pymol" / f"_cmd{tmp_cmd_suffix}"
+      ),
     )
 
 

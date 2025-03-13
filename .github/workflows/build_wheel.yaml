@@ -1,3 +1,17 @@
+#A* -------------------------------------------------------------------
+#B* This file contains source code for running a GitHub automation
+#-* related to the build process of the PyMOL computer program
+#C* Copyright 2025 by Martin Urban.
+#D* -------------------------------------------------------------------
+#E* It is unlawful to modify or remove this copyright notice.
+#F* -------------------------------------------------------------------
+#G* Please see the accompanying LICENSE file for further information.
+#H* -------------------------------------------------------------------
+#I* Additional authors of this source file include:
+#-*
+#-*
+#-*
+#Z* -------------------------------------------------------------------
 name: Build Wheel
 
 on: [push]
@@ -22,14 +36,17 @@ jobs:
 
       - name: Install dependencies
         run: |
+          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+          brew install cmake
           python -m venv .venv
           ./.venv/bin/pip install wheel setuptools
           ./.venv/bin/pip install -r requirements.txt
-          ./run_automation.sh setup-dev-env
+          ./automator.sh setup dev-env
 
       - name: Build wheel
         run: |
-          ./run_automation.sh build-wheel
+          ./automator.sh build so
+          ./automator.sh build wheel
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
