@@ -19,6 +19,7 @@ import pathlib
 import shutil
 import subprocess
 import sys
+import platform
 
 from setuptools import find_packages
 from setuptools import setup
@@ -35,6 +36,19 @@ PROJECT_ROOT_DIR = pathlib.Path(__file__).parent
 DEBUG = False  # Debug flag for not cleaning up certain build files.
 
 
+def get_mac_architecture():
+  try:
+    # Get the hardware architecture using sysctl
+    arch = subprocess.check_output(
+      ['sysctl', '-n', 'hw.machine'],
+      stderr=subprocess.DEVNULL
+    ).decode().strip()
+    return arch
+  except subprocess.CalledProcessError:
+    # Fallback to platform.machine() if sysctl isn't available (unlikely on macOS)
+    return platform.machine()
+
+
 class CMakeBuildExt(build_ext):
   """Custom command to build C++ extension using CMake."""
 
@@ -46,6 +60,7 @@ class CMakeBuildExt(build_ext):
 
   def build_cmake_extension(self):
     """Run CMake to build the C/C++ extension."""
+    print(f"Architecture: {get_mac_architecture()}")
     tmp_python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
     build_dir = os.path.join(".", "cmake-build-setup_py")
     os.makedirs(build_dir, exist_ok=True)
@@ -57,7 +72,7 @@ class CMakeBuildExt(build_ext):
       "-DCMAKE_TOOLCHAIN_FILE=./vendor/vcpkg/scripts/buildsystems/vcpkg.cmake",
       f"-DPYTHON_VER={tmp_python_version}",
       f"-DSHARED_SUFFIX={tmp_cmd_suffix}",
-      #"-DCMAKE_OSX_ARCHITECTURES=x86_64"
+      "-DCMAKE_OSX_ARCHITECTURES=x86_64"
     ]
 
     # Run CMake to configure and build the extension

@@ -108,19 +108,14 @@ jobs:
 
       - name: Install vcpkg dependencies
         run: |
-          TRIPLET=$([ "${{ matrix.arch }}" = "arm64" ] && echo "arm64-osx" || echo "x64-osx")
+# TRIPLET=$([ "${{ matrix.arch }}" = "arm64" ] && echo "arm64-osx" || echo "x64-osx")
           ${{ env.VCPKG_ROOT }}/vcpkg install
 
       - name: Build extension
-        env:
-          CMAKE_ARGS: >
-            -DCMAKE_TOOLCHAIN_FILE=./vendor/vcpkg/scripts/buildsystems/vcpkg.cmake
-            -DCMAKE_OSX_ARCHITECTURES=${{ matrix.arch }}
-            -DPYTHON_VER=${{ matrix.python-version }}
-            -DSHARED_SUFFIX=.cpython-311-darwin.so  # Update to match Python version
         run: |
           source .venv/bin/activate
-          python setup.py build bdist_wheel
+          python automations/my_automator.py build so
+          python automations/my_automator.py build wheel
 #      - name: Create universal binary
 #        if: matrix.arch == 'x86_64'  # Run once after both arch builds
 #        run: |
