@@ -53,8 +53,6 @@
 #        with:
 #          name: wheel-${{ matrix.python-version }}
 #          path: dist/*.whl
-
-
 name: Build Wheel
 
 on: [push]
@@ -108,7 +106,6 @@ jobs:
 
       - name: Install vcpkg dependencies
         run: |
-# TRIPLET=$([ "${{ matrix.arch }}" = "arm64" ] && echo "arm64-osx" || echo "x64-osx")
           ${{ env.VCPKG_ROOT }}/vcpkg install
 
       - name: Build extension
@@ -135,3 +132,5 @@ jobs:
         with:
           name: pymol-wheel
           path: dist/*.whl
+
+# TRIPLET=$([ "${{ matrix.arch }}" = "arm64" ] && echo "arm64-osx" || echo "x64-osx")
