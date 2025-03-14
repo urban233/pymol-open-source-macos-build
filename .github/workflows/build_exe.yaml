@@ -12,7 +12,7 @@
 #-*
 #-*
 #Z* -------------------------------------------------------------------
-name: Build Wheel
+name: Build Exe
 
 on: [push]
 
@@ -24,7 +24,7 @@ jobs:
     strategy:
       matrix:
         os: [macos-13, macos-14]
-        python-version: ["3.11", "3.12"]
+        python-version: ["3.11"]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repository
@@ -60,10 +60,10 @@ jobs:
           source .venv/bin/activate
           python automations/my_automator.py setup dev-env
           python automations/my_automator.py build so
-          python automations/my_automator.py build wheel
+          python automations/my_automator.py build exe
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: macpymol-wheel-${{ matrix.os }}
-          path: dist/*.whl
+          path: dist/*

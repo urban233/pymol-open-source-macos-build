@@ -20,8 +20,12 @@ import shutil
 import zipfile
 import platform
 import subprocess
+import sys
 
 from cx_Freeze import Freezer, Executable
+
+FILE_ROOT_PATH = pathlib.Path(__file__).parent
+PROJECT_ROOT_DIR = pathlib.Path(FILE_ROOT_PATH).parent
 
 
 def get_mac_architecture():
@@ -36,7 +40,19 @@ def get_mac_architecture():
     # Fallback to platform.machine() if sysctl isn't available (unlikely on macOS)
     return platform.machine()
 
-FILE_ROOT_PATH = pathlib.Path(__file__).parent
+
+def copy_pymol_sources() -> None:
+  """Copies the pymol python sources from the vendor directory."""
+  tmp_src_path = pathlib.Path(PROJECT_ROOT_DIR / "src/python")
+  tmp_pymol_python_src_path = pathlib.Path(PROJECT_ROOT_DIR / "vendor/pymol-open-source/modules")
+  if not tmp_src_path.exists():
+    print("Copying the pymol python sources ...")
+    tmp_src_path.mkdir(parents=True)
+    shutil.copytree(
+      tmp_pymol_python_src_path,
+      tmp_src_path,
+      dirs_exist_ok=True
+    )
 
 
 # Define the entry point of your application
@@ -78,29 +94,33 @@ if __name__ == '__main__':
   tmp_shared_suffix = f".cpython-{tmp_python_version.replace('.', '')}-darwin.so"
   tmp_arch = get_mac_architecture()
   tmp_build_dir_name = f"exe.macosx-{tmp_arch}-{tmp_python_version}"
+  tmp_dist_path = pathlib.Path(f"{FILE_ROOT_PATH}/dist")
+  tmp_build_exe_path = pathlib.Path(f"{PROJECT_ROOT_DIR}/dist/{os.listdir(pathlib.Path(f'{PROJECT_ROOT_DIR}/dist'))[0]}")
+  if tmp_dist_path.exists():
+    shutil.rmtree(tmp_dist_path)
   freezer.freeze()
-  with zipfile.ZipFile(pathlib.Path(f"{FILE_ROOT_PATH}/build/{tmp_build_dir_name}/lib/library.zip"), 'r') as zip_ref:
-    zip_ref.extractall(pathlib.Path(f"{FILE_ROOT_PATH}/build/{tmp_build_dir_name}/lib"))
-  if not pathlib.Path(const.PROJECT_ROOT_DIR / "src/python/pymol").exists():
-    utils.copy_pymol_sources()
-    _CMD_FROM_BUILD_DIR = pathlib.Path(const.PROJECT_ROOT_DIR / "cmake-build-release" / f"_cmd{tmp_shared_suffix}")
+  with zipfile.ZipFile(pathlib.Path(f"{tmp_build_exe_path}/lib/library.zip"), 'r') as zip_ref:
+    zip_ref.extractall(pathlib.Path(f"{tmp_build_exe_path}/lib"))
+  if not pathlib.Path(PROJECT_ROOT_DIR / "src/python/pymol").exists():
+    copy_pymol_sources()
+    _CMD_FROM_BUILD_DIR = pathlib.Path(PROJECT_ROOT_DIR / "cmake-build-release" / f"_cmd{tmp_shared_suffix}")
     if _CMD_FROM_BUILD_DIR.exists():
       shutil.copy(
         _CMD_FROM_BUILD_DIR,
-        pathlib.Path(const.PROJECT_ROOT_DIR / "src/python/pymol" / f"_cmd{tmp_shared_suffix}")
+        pathlib.Path(PROJECT_ROOT_DIR / "src/python/pymol" / f"_cmd{tmp_shared_suffix}")
       )
     else:
       print(f"Could not find _cmd{tmp_shared_suffix} for building the EXE file.")
   else:
     print("The src/python/pymol directory already exists, that might mean a self compiled _cmd module was built.")
-  remove_dist_info_folders(pathlib.Path(FILE_ROOT_PATH / f"build/{tmp_build_dir_name}/lib"))
+  remove_dist_info_folders(pathlib.Path(f"{tmp_build_exe_path}/lib"))
   shutil.copytree(
-    str(pathlib.Path(FILE_ROOT_PATH / "pymol/wizard")),
-    str(pathlib.Path(FILE_ROOT_PATH / f"build/{tmp_build_dir_name}/lib/pymol/wizard")),
+    str(pathlib.Path(PROJECT_ROOT_DIR / "pymol/pymol/wizard")),
+    str(pathlib.Path(f"{tmp_build_exe_path}/lib/pymol/wizard")),
     dirs_exist_ok=True
   )
   shutil.copytree(
-    str(pathlib.Path(FILE_ROOT_PATH / "pymol/data/startup")),
-    str(pathlib.Path(FILE_ROOT_PATH / f"build/{tmp_build_dir_name}/lib/pymol/data/startup")),
+    str(pathlib.Path(PROJECT_ROOT_DIR / "pymol/pymol/data/startup")),
+    str(pathlib.Path(f"{tmp_build_exe_path}/lib/pymol/data/startup")),
     dirs_exist_ok=True
   )
