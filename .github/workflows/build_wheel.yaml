@@ -12,53 +12,12 @@
 #-*
 #-*
 #Z* -------------------------------------------------------------------
-#name: Build Wheel
-#
-#on: [push]
-#
-#jobs:
-#  build:
-#
-#    runs-on: macos-latest
-#    strategy:
-#      matrix:
-#        python-version: ["3.10", "3.11", "3.12"]
-#
-#    steps:
-#      - uses: actions/checkout@v4
-#      - name: Set up Python ${{ matrix.python-version }}
-#        uses: actions/setup-python@v5
-#        with:
-#          python-version: ${{ matrix.python-version }}
-#      # You can test your matrix by printing the current Python version
-#      - name: Display Python version
-#        run: python -c "import sys; print(sys.version)"
-#
-#      - name: Install dependencies
-#        run: |
-#          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-#          brew install cmake
-#          python -m venv .venv
-#          ./.venv/bin/pip install wheel setuptools
-#          ./.venv/bin/pip install -r requirements.txt
-#          ./automator.sh setup dev-env
-#
-#      - name: Build wheel
-#        run: |
-#          ./automator.sh build so
-#          ./automator.sh build wheel
-#
-#      - name: Upload artifact
-#        uses: actions/upload-artifact@v4
-#        with:
-#          name: wheel-${{ matrix.python-version }}
-#          path: dist/*.whl
 name: Build Wheel
 
 on: [push]
 
 env:
-  VCPKG_ROOT: ${{ github.workspace }}/vendor/vcpkg  # Match your project structure
+  VCPKG_ROOT: ${{ github.workspace }}/vendor/vcpkg
 
 jobs:
   build:
@@ -86,7 +45,7 @@ jobs:
         run: |
           python -m venv .venv
           source .venv/bin/activate
-          python -m pip install wheel  # Add other build deps if needed
+          python -m pip install wheel setuptools  # setuptools needed for Python >=3.12
           python -m pip install -r requirements.txt
 
       - name: Bootstrap vcpkg
@@ -102,26 +61,9 @@ jobs:
           python automations/my_automator.py setup dev-env
           python automations/my_automator.py build so
           python automations/my_automator.py build wheel
-#      - name: Create universal binary
-#        if: matrix.arch == 'x86_64'  # Run once after both arch builds
-#        run: |
-#          lipo -create \
-#            -output dist/_cmd_universal.so \
-#            build/lib*/_cmd*.so
-#          rm build/lib*/_cmd*.so  # Clean individual arch builds
-#          mv dist/_cmd_universal.so build/lib/
-#
-#      - name: Package wheel
-#        if: matrix.arch == 'x86_64'
-#        run: |
-#          source .venv/bin/activate
-#          python setup.py bdist_wheel
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: macpymol-wheel-${{ matrix.os }}
           path: dist/*.whl
-
-# VCPKG_TRIPLET: x64-osx  # Use arm64-osx for Apple Silicon
-# TRIPLET=$([ "${{ matrix.arch }}" = "arm64" ] && echo "arm64-osx" || echo "x64-osx")
-# arch: [x86_64, arm64]
