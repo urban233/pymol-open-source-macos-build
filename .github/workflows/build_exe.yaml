@@ -47,6 +47,8 @@ jobs:
           source .venv/bin/activate
           python -m pip install wheel setuptools  # setuptools needed for Python >=3.12
           python -m pip install -r requirements.txt
+          python -m pip install cx_freeze
+          python -m pip install pyqt5
 
       - name: Bootstrap vcpkg
         run: ${{ env.VCPKG_ROOT }}/bootstrap-vcpkg.sh -disableMetrics
@@ -65,5 +67,5 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: macpymol-wheel-${{ matrix.os }}
+          name: macOS_PyMOL-exe-${{ matrix.os }}-${{ matrix.python-version }}
           path: dist/*

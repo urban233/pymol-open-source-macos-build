@@ -65,5 +65,5 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: macpymol-wheel-${{ matrix.os }}
+          name: macOS_PyMOL-wheel-${{ matrix.os }}-${{ matrix.python-version }}
           path: dist/*.whl
