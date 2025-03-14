@@ -90,27 +90,28 @@ jobs:
           python -m pip install wheel  # Add other build deps if needed
           python -m pip install -r requirements.txt
 
-      - name: Cache vcpkg
-        uses: actions/cache@v3
-        with:
-          path: |
-            ${{ env.VCPKG_ROOT }}/downloads
-            ${{ env.VCPKG_ROOT }}/packages
-            ${{ env.VCPKG_ROOT }}/installed
-          key: ${{ runner.os }}-vcpkg-${{ matrix.arch }}-${{ hashFiles('vcpkg.json') }}
-          restore-keys: |
-            ${{ runner.os }}-vcpkg-${{ matrix.arch }}-
+#      - name: Cache vcpkg
+#        uses: actions/cache@v3
+#        with:
+#          path: |
+#            ${{ env.VCPKG_ROOT }}/downloads
+#            ${{ env.VCPKG_ROOT }}/packages
+#            ${{ env.VCPKG_ROOT }}/installed
+#          key: ${{ runner.os }}-vcpkg-${{ matrix.arch }}-${{ hashFiles('vcpkg.json') }}
+#          restore-keys: |
+#            ${{ runner.os }}-vcpkg-${{ matrix.arch }}-
 
       - name: Bootstrap vcpkg
         run: ${{ env.VCPKG_ROOT }}/bootstrap-vcpkg.sh -disableMetrics
 
       - name: Install vcpkg dependencies
         run: |
-          ${{ env.VCPKG_ROOT }}/vcpkg install
+          ${{ env.VCPKG_ROOT }}/vcpkg install --x-use-aria2
 
       - name: Build extension
         run: |
           source .venv/bin/activate
+          python automations/my_automator.py setup dev-env
           python automations/my_automator.py build so
           python automations/my_automator.py build wheel
 #      - name: Create universal binary

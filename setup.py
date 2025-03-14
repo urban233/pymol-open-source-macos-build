@@ -72,7 +72,7 @@ class CMakeBuildExt(build_ext):
       "-DCMAKE_TOOLCHAIN_FILE=./vendor/vcpkg/scripts/buildsystems/vcpkg.cmake",
       f"-DPYTHON_VER={tmp_python_version}",
       f"-DSHARED_SUFFIX={tmp_cmd_suffix}",
-      "-DCMAKE_OSX_ARCHITECTURES=x86_64"
+      "-DCMAKE_OSX_ARCHITECTURES=arm64"
     ]
 
     # Run CMake to configure and build the extension
