@@ -76,10 +76,14 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Setup Python
+      - name: Initialize vcpkg
+        run: |
+          git clone https://github.com/Microsoft/vcpkg.git vendor/vcpkg
+
+      - name: Setup Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
         with:
-          python-version: ${{ env.PYTHON_VER }}
+          python-version: ${{ matrix.python-version }}
 
       - name: Create virtual environment
         run: |
@@ -112,7 +116,7 @@ jobs:
           CMAKE_ARGS: >
             -DCMAKE_TOOLCHAIN_FILE=./vendor/vcpkg/scripts/buildsystems/vcpkg.cmake
             -DCMAKE_OSX_ARCHITECTURES=${{ matrix.arch }}
-            -DPYTHON_VER=${{ env.PYTHON_VER }}
+            -DPYTHON_VER=${{ matrix.python-version }}
             -DSHARED_SUFFIX=.cpython-311-darwin.so  # Update to match Python version
         run: |
           source .venv/bin/activate
