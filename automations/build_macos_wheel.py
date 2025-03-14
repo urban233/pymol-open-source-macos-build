@@ -25,20 +25,21 @@ import utils
 
 def build_wheel() -> None:
   """Builds the wheel file for the python PyMOL package."""
-  # Run the command using subprocess.run
+  tmp_python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
+  tmp_shared_suffix = f".cpython-{tmp_python_version.replace('.', '')}-darwin.so"
   if not pathlib.Path(const.PROJECT_ROOT_DIR / "src/python/pymol").exists():
     utils.copy_pymol_sources()
-    _CMD_FROM_BUILD_DIR = pathlib.Path(const.PROJECT_ROOT_DIR / "cmake-build-release" / "_cmd.cpython-311-darwin.so")
-    _CMD_FROM_PRE_BUILT_DIR = pathlib.Path(const.PROJECT_ROOT_DIR / "pre-built" / "_cmd.cpython-311-darwin.so")
+    _CMD_FROM_BUILD_DIR = pathlib.Path(const.PROJECT_ROOT_DIR / "cmake-build-release" / f"_cmd{tmp_shared_suffix}")
+    _CMD_FROM_PRE_BUILT_DIR = pathlib.Path(const.PROJECT_ROOT_DIR / "pre-built" / f"_cmd{tmp_shared_suffix}")
     if _CMD_FROM_BUILD_DIR.exists():
       shutil.copy(
         _CMD_FROM_BUILD_DIR,
-        pathlib.Path(const.PROJECT_ROOT_DIR / "src/python/pymol" / "_cmd.cpython-311-darwin.so")
+        pathlib.Path(const.PROJECT_ROOT_DIR / "src/python/pymol" / f"_cmd{tmp_shared_suffix}")
       )
     else:
       shutil.copy(
         _CMD_FROM_PRE_BUILT_DIR,
-        pathlib.Path(const.PROJECT_ROOT_DIR / "src/python/pymol" / "_cmd.cpython-311-darwin.so")
+        pathlib.Path(const.PROJECT_ROOT_DIR / "src/python/pymol" / f"_cmd{tmp_shared_suffix}")
       )
   else:
     print("The src/python/pymol directory already exists, that might mean a self compiled _cmd module was built.")

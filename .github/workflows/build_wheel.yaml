@@ -59,15 +59,14 @@ on: [push]
 
 env:
   VCPKG_ROOT: ${{ github.workspace }}/vendor/vcpkg  # Match your project structure
-  VCPKG_TRIPLET: x64-osx  # Use arm64-osx for Apple Silicon
 
 jobs:
   build:
-    runs-on: macos-latest
     strategy:
       matrix:
-        arch: [x86_64, arm64]
+        os: [macos-13, macos-14]
         python-version: ["3.11", "3.12"]
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -89,17 +88,6 @@ jobs:
           source .venv/bin/activate
           python -m pip install wheel  # Add other build deps if needed
           python -m pip install -r requirements.txt
-
-#      - name: Cache vcpkg
-#        uses: actions/cache@v3
-#        with:
-#          path: |
-#            ${{ env.VCPKG_ROOT }}/downloads
-#            ${{ env.VCPKG_ROOT }}/packages
-#            ${{ env.VCPKG_ROOT }}/installed
-#          key: ${{ runner.os }}-vcpkg-${{ matrix.arch }}-${{ hashFiles('vcpkg.json') }}
-#          restore-keys: |
-#            ${{ runner.os }}-vcpkg-${{ matrix.arch }}-
 
       - name: Bootstrap vcpkg
         run: ${{ env.VCPKG_ROOT }}/bootstrap-vcpkg.sh -disableMetrics
@@ -131,7 +119,9 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: pymol-wheel
+          name: macpymol-wheel-${{ matrix.os }}
           path: dist/*.whl
 
+# VCPKG_TRIPLET: x64-osx  # Use arm64-osx for Apple Silicon
 # TRIPLET=$([ "${{ matrix.arch }}" = "arm64" ] && echo "arm64-osx" || echo "x64-osx")
+# arch: [x86_64, arm64]
