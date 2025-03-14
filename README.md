@@ -112,6 +112,16 @@ icon in the bottom left panel and click on the `Gear icon > CMake Settings`)
 5. **Optional**: If you now run `./run_automation.sh build-wheel` the new 
 wheel file will automatically use your self built `_cmd` module.
 
+## arm64 builds
+Currently, arm64 builds are **not** supported. However, it is worked on,
+to support this kind of architecture.
+
+### CPython under arm64
+To build the _cmd module a CPython version that is build for amr64 
+is necessary. For intel-based Macs CPython has to be compiled from source.
+To do this clone the cpython repo and checkout this commit hash:
+`d03b868578a29d9d64f829459b584eed48862056`
+
 ## Roadmap
 Until now the build wheel file can only be used with Python 3.11.
 The plan for the future is to support multiple different Python versions.

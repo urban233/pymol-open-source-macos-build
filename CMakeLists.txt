@@ -1,6 +1,19 @@
 cmake_minimum_required(VERSION 3.13)
 project(_cmd)
 
+if (${CMAKE_OSX_ARCHITECTURES} STREQUAL "arm64")
+    message("Build for arm64 macOS")
+    # Here is knowledge about arm64 macOS needed
+    find_package(Python3 ${PYTHON_VER} EXACT COMPONENTS Development REQUIRED)
+    set(LIB_DIR ${CMAKE_SOURCE_DIR}/vcpkg_installed/arm64-osx/lib)
+    set(PY_LIB Python3::Python)
+else ()
+    message("Build for x86_64 macOS")
+    find_package(Python3 ${PYTHON_VER} EXACT COMPONENTS Development REQUIRED)
+    set(PY_LIB Python3::Python)
+    set(LIB_DIR ${CMAKE_SOURCE_DIR}/vcpkg_installed/x64-osx/lib)
+endif ()
+
 set(CMAKE_VERBOSE_MAKEFILE on)
 
 set(ALL_SRC
@@ -253,9 +266,6 @@ set(ALL_COMP_ARGS
 )
 target_compile_options(_cmd PRIVATE ${ALL_COMP_ARGS})
 
-# Set Python paths manually
-find_package(Python3 ${PYTHON_VER} EXACT COMPONENTS Development REQUIRED)
-
 #set(SHARED_SUFFIX .cpython-311-darwin.so)
 set_target_properties(_cmd PROPERTIES SUFFIX ${SHARED_SUFFIX})
 
@@ -298,15 +308,12 @@ set (ALL_INC_DIR
 
 target_include_directories(_cmd PUBLIC ${ALL_INC_DIR})
 
-target_link_directories(_cmd PRIVATE ${CMAKE_SOURCE_DIR}/vcpkg_installed/x64-osx/lib)
-target_link_options(_cmd PRIVATE
-        -framework OpenGL
-        #-undefined dynamic_lookup
-)
+target_link_directories(_cmd PRIVATE ${LIB_DIR})
+target_link_options(_cmd PRIVATE -framework OpenGL)
 
 target_link_libraries(
         _cmd PRIVATE
-        PNG::PNG freetype xml2 GLEW netCDF::netcdf OpenGL::GL Python3::Python
+        PNG::PNG freetype xml2 GLEW netCDF::netcdf OpenGL::GL ${PY_LIB}
 )
 
 set(ALL_DEF
