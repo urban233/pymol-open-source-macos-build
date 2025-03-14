@@ -106,7 +106,7 @@ jobs:
 
       - name: Install vcpkg dependencies
         run: |
-          ${{ env.VCPKG_ROOT }}/vcpkg install --x-use-aria2
+          ${{ env.VCPKG_ROOT }}/vcpkg install
 
       - name: Build extension
         run: |
