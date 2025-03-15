@@ -17,6 +17,7 @@
 import os
 import pathlib
 import shutil
+import time
 import zipfile
 import platform
 import subprocess
@@ -92,13 +93,12 @@ def remove_dist_info_folders(directory: pathlib.Path):
 if __name__ == '__main__':
   tmp_python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
   tmp_shared_suffix = f".cpython-{tmp_python_version.replace('.', '')}-darwin.so"
-  tmp_arch = get_mac_architecture()
-  tmp_build_dir_name = f"exe.macosx-{tmp_arch}-{tmp_python_version}"
   tmp_dist_path = pathlib.Path(f"{FILE_ROOT_PATH}/dist")
-  tmp_build_exe_path = pathlib.Path(f"{PROJECT_ROOT_DIR}/dist/{os.listdir(pathlib.Path(f'{PROJECT_ROOT_DIR}/dist'))[0]}")
   if tmp_dist_path.exists():
     shutil.rmtree(tmp_dist_path)
   freezer.freeze()
+  #tmp_build_exe_path = pathlib.Path(f"{PROJECT_ROOT_DIR}/dist/{os.listdir(pathlib.Path(f'{PROJECT_ROOT_DIR}/dist'))[0]}")
+  tmp_build_exe_path = freezer.target_dir
   with zipfile.ZipFile(pathlib.Path(f"{tmp_build_exe_path}/lib/library.zip"), 'r') as zip_ref:
     zip_ref.extractall(pathlib.Path(f"{tmp_build_exe_path}/lib"))
   if not pathlib.Path(PROJECT_ROOT_DIR / "src/python/pymol").exists():

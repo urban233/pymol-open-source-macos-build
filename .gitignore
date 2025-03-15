@@ -183,6 +183,3 @@ cython_debug/
 /vcpkg_installed/
 /src/
 /pymol/
-/pre-built/macos/lib_64/
-/pre-built/linux/lib_64/
-/cmake-build-release-arm64/
