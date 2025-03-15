@@ -61,6 +61,7 @@ jobs:
           python automations/my_automator.py setup dev-env
           python automations/my_automator.py build so
           python automations/my_automator.py build wheel
+          pip install dist/*.whl
 
       - name: Run pytest
         run: |
