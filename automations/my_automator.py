@@ -17,6 +17,7 @@
 import build_macos_wheel
 import build_macos_exe
 import build_macos_so
+import run_pytest
 import dev_env
 
 
@@ -46,6 +47,10 @@ AUTOMATION_TREE = {
         "func": build_macos_so.build_cmd_module
       }
     }
+  },
+  "test": {
+    "help": "Runs all tests under the tests/ directory using pytest.",
+    "func": run_pytest.run_pytest_suite
   }
 }
 

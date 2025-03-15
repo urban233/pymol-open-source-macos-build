@@ -62,7 +62,16 @@ jobs:
           source .venv/bin/activate
           python automations/my_automator.py setup dev-env
           python automations/my_automator.py build so
+          python automations/my_automator.py build wheel
+          pip install dist/*.whl
           python automations/my_automator.py build exe
+
+      - name: Run pytest
+        run: |
+          source .venv/bin/activate
+          pip install pytest
+          cd tests/
+          pytest
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
