@@ -40,3 +40,8 @@ def setup_dev_env() -> None:
     subprocess.run([pathlib.Path(const.PROJECT_ROOT_DIR / "vendor/vcpkg" / "vcpkg"), "install"], shell=True)
   else:
     print("vcpkg already setup.")
+
+  if not pathlib.Path(f"{const.PROJECT_ROOT_DIR}/vendor/create-dmg").exists():
+    subprocess.run(["git", "clone", "https://github.com/create-dmg/create-dmg.git", pathlib.Path(f"{const.PROJECT_ROOT_DIR}/vendor/create-dmg")])
+  else:
+    print("create-dmg already setup.")

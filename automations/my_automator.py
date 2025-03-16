@@ -17,6 +17,7 @@
 import build_macos_wheel
 import build_macos_exe
 import build_macos_so
+import build_macos_dmg
 import run_pytest
 import dev_env
 
@@ -41,6 +42,14 @@ AUTOMATION_TREE = {
       "exe": {
         "help": "Creates a frozen Python application",
         "func": build_macos_exe.build
+      },
+      "app": {
+        "help": "Creates a frozen Python application as macOS app package",
+        "func": build_macos_exe.build_using_setup_file
+      },
+      "dmg": {
+        "help": "Creates a a DMG file from the macOS app package",
+        "func": build_macos_dmg.build_dmg
       },
       "so": {
         "help": "Compiles the _cmd module from source",

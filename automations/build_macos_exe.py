@@ -32,6 +32,9 @@ class BuildMacOSExe:
     self.build_script_filepath = pathlib.Path(
       const.PROJECT_ROOT_DIR / "pymol", "build_exe.py"
     )
+    self.build_script_alt_filepath = pathlib.Path(
+      const.PROJECT_ROOT_DIR / "pymol", "setup_build_exe.py"
+    )
     self.license_filepath = pathlib.Path(const.PROJECT_ROOT_DIR / "pymol/LICENSE")
     self.readme_filepath = pathlib.Path(const.PROJECT_ROOT_DIR / "pymol/README.md")
     self.build_dir = pathlib.Path(const.PROJECT_ROOT_DIR / "pymol/build")
@@ -40,7 +43,7 @@ class BuildMacOSExe:
     """Sets up a temporary build environment."""
     # <editor-fold desc="Path/Filepath definitions">
     tmp_build_script_filepath = pathlib.Path(
-      const.PROJECT_ROOT_DIR / "scripts/python", "build_exe.py"
+      const.PROJECT_ROOT_DIR / "scripts/python", "setup_build_exe.py"
     )
     tmp_vendor_pymol_path = pathlib.Path(
       const.PROJECT_ROOT_DIR / "vendor/pymol-open-source"
@@ -66,6 +69,9 @@ class BuildMacOSExe:
     tmp_edited_init_py_filepath = pathlib.Path(
       const.PROJECT_ROOT_DIR / "edited/pymol", "__init__.py"
     )
+    tmp_edited_startup_wrapper_py_filepath = pathlib.Path(
+      const.PROJECT_ROOT_DIR / "edited/pymol", "startup_wrapper.py"
+    )
     tmp_alternative_splash_screen_filepath = pathlib.Path(
       const.PROJECT_ROOT_DIR / "alternative_design" / "splash.png"
     )
@@ -90,6 +96,10 @@ class BuildMacOSExe:
       pathlib.Path(self.src_path / "pymol", "__init__.py")
     )
     shutil.copy(
+      tmp_edited_startup_wrapper_py_filepath,
+      pathlib.Path(self.src_path / "pymol", "startup_wrapper.py")
+    )
+    shutil.copy(
       tmp_alternative_splash_screen_filepath,
       pathlib.Path(self.src_path / "pymol/data/pymol", "splash.png")
     )
@@ -106,8 +116,35 @@ class BuildMacOSExe:
     shutil.copytree(self.build_dir, pathlib.Path(const.PROJECT_ROOT_DIR / "dist"),
                     dirs_exist_ok=True)
 
+  def setup_based_build(self) -> None:
+    """Uses the cx_freeze setup.py for the build process."""
+    self.setup_build_environment()
+    tmp_build_script_filepath = pathlib.Path(
+      const.PROJECT_ROOT_DIR / "scripts/python", "setup_build_exe.py"
+    )
+    shutil.copy(tmp_build_script_filepath, self.build_script_alt_filepath)
+    tmp_edited_startup_wrapper_py_filepath = pathlib.Path(
+      const.PROJECT_ROOT_DIR / "edited/pymol", "startup_wrapper.py"
+    )
+    shutil.copy(
+      tmp_edited_startup_wrapper_py_filepath,
+      pathlib.Path(self.src_path / "pymol", "startup_wrapper.py")
+    )
+    subprocess.run(
+      [const.PYTHON_EXECUTABLE, self.build_script_alt_filepath, "bdist_mac"],
+      stdout=sys.stdout, stderr=sys.stderr, text=True, cwd=self.src_path
+    )
+    shutil.copytree(self.build_dir, pathlib.Path(const.PROJECT_ROOT_DIR / "dist"),
+                    dirs_exist_ok=True)
+
 
 def build() -> None:
   """Builds the Windows EXE file using the BuildWinExe class."""
   tmp_build_macos_exe = BuildMacOSExe()
   tmp_build_macos_exe.build()
+
+
+def build_using_setup_file():
+  """Builds the EXE file but based on the setup.py for cx_freeze."""
+  tmp_build_macos_exe = BuildMacOSExe()
+  tmp_build_macos_exe.setup_based_build()

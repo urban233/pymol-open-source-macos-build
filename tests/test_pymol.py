@@ -15,9 +15,14 @@
 """
 import pathlib
 
+import pymol
 from pymol import cmd
 
 _FILEPATH = pathlib.Path(__file__).parent
+
+
+def test_startup():
+  pymol.launch()
 
 
 def test_fetch():
