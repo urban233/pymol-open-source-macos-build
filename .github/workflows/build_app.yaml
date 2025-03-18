@@ -64,7 +64,6 @@ jobs:
           python automations/my_automator.py build so
           python automations/my_automator.py build wheel
           pip install dist/*.whl
-          python automations/my_automator.py build app
 
       - name: Run pytest
         run: |
@@ -72,6 +71,11 @@ jobs:
           pip install pytest
           cd tests/
           pytest
+
+      - name: Build app package
+        run: |
+          source .venv/bin/activate
+          python automations/my_automator.py build app
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4

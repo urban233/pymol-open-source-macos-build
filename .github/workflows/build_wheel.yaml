@@ -47,6 +47,7 @@ jobs:
           source .venv/bin/activate
           python -m pip install wheel setuptools  # setuptools needed for Python >=3.12
           python -m pip install -r requirements.txt
+          python -m pip install pyqt5
 
       - name: Bootstrap vcpkg
         run: ${{ env.VCPKG_ROOT }}/bootstrap-vcpkg.sh -disableMetrics
